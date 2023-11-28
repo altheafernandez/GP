@@ -1,0 +1,68 @@
+---
+title: "Goal Programming"
+author: "ALTHEA"
+date: "2023-11-28"
+output: html_document
+---
+
+Summary
+1. The company needs to utilize combinations of X1, X2, and X3 to optimize the objective function. Due to constraints, Product 1 and Product 2 couldn't be produced as planned; specifically, 20 units of Product 1 and 15 units of Product 2 couldn't be manufactured, resulting in a solution of "0" for X1 (Product 1), X2 (Product 2), and X3 (Product 3). Consequently, the production of Product 3 (X3) has been altered, allowing only 15 units to be manufactured to maximize profit.
+
+2. The objective was to maintain a stable employment level, capping the maximum number of employees at 50 hundred. However, the company exceeded this limit by 25 hundred employees (Y1N), necessitating a penalty payment for the surplus in the employee count.
+
+3.The aim of y2p and y2n was to gauge the change in next year's earnings compared to the current level. In this scenario, both indicators are "0," signifying no anticipated increase or decrease in earnings for the upcoming year. Consequently, the earnings for the next year are expected to remain unchanged.
+
+4. The profit the company aims to maximize is quantified by the objective function value, which, in this case, amounts to $225 million.
+
+Objective Function
+Maximize Z = P - 6C - 3D, where
+P = Total discounted profit over the life of the new products,
+C = Change in either direction towards the current level of employment,
+D = decrease if any in next year’s earnings from the current year’s level.
+Loading the required packages.
+
+```{r}
+library(lpSolveAPI)
+```
+
+#Defining Y1+(Y1N) and Y1-(Y1M) as the amount over (if any) and the amount under (if any) the employment level goal.
+#Defining Y2+(Y2M) and Y2-(Y2N) in the same way for the goal regarding earnings next year.
+#Define X1, X2 and X3 as the production rates of Products 1, 2, and 3, respectively.
+#Also expressing P in terms of X1, X2 and X3 and the objective function in terms of X1, X2, X3, Y1M, Y1N, Y2M, Y2N
+
+```{r}
+x <- read.lp("/Users/altheafernandez/Desktop/Rhistory/GP.lp")
+x
+```
+#The following table displays the effects of each of the new goods (per unit rate of production) on each of the variables
+
+```{r}
+y <- matrix(c("Total Profit", "Employment Level", "Earnings Next Year",
+20,6,8,
+15,4,7,
+25,5,5,
+"Maximize","=50",">=75",
+"Millions of Dollars", "Hundreds of Employees", "Millions of Dollars"),
+ncol=6, byrow = F)
+colnames(y) <- c("Factor","Product 1", "Product 2", "Product 3", "Goal", "Units")
+as.table(y)
+```
+
+#solving goal programming model
+
+```{r}
+solve(x)
+```
+
+```{r}
+get.objective(x)
+```
+
+```{r}
+get.variables(x)
+```
+
+```{r}
+get.constraints(x)
+```
+
